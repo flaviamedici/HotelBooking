@@ -38,11 +38,16 @@ class Reservation:
         """)
         return content
 
+class CreditCard:
+    pass
+
 print(df)
 hotel_ID = input("Enter hotel id: ")
 hotel = Hotel(hotel_ID)
 
 if hotel.available():
+    card_number = input("Please provide your card number:")
+    credit_card = CreditCard()
     hotel.book()
     name = input("Enter your name: ")
     reservation = Reservation(customer_name=name, hotel_object=hotel)
