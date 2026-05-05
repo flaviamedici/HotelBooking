@@ -3,6 +3,8 @@ from collections import namedtuple
 import pandas
 
 df = pandas.read_csv("hotels.csv", dtype={"id": str})
+df_cards = pandas.read_csv("credit_card.csv", dtype= str).to_dict(orient="records")
+
 
 class Hotel:
     def __init__(self, hotel_id):
@@ -39,18 +41,28 @@ class Reservation:
         return content
 
 class CreditCard:
-    pass
-
+    def __init__(self, number):
+        self.number = number
+    def validate(self, expiration, holder, cvc):
+        card_data = {"number": self.number, "expiration": expiration,
+                     "holder": holder, "cvc": cvc}
+        if card_data in df_cards:
+            return True
+        else:
+            return False
 print(df)
 hotel_ID = input("Enter hotel id: ")
 hotel = Hotel(hotel_ID)
 
 if hotel.available():
     card_number = input("Please provide your card number:")
-    credit_card = CreditCard()
-    hotel.book()
-    name = input("Enter your name: ")
-    reservation = Reservation(customer_name=name, hotel_object=hotel)
-    print(reservation.generate())
+    credit_card = CreditCard(number="1234567890123456")
+    if credit_card.validate(expiration="12/26", holder="JOHN SMITH", cvc="123"):
+        hotel.book()
+        name = input("Enter your name: ")
+        reservation = Reservation(customer_name=name, hotel_object=hotel)
+        print(reservation.generate())
+    else:
+        print("There was a problem with you payment")
 else:
     print("Sorry, this hotel is not available")
