@@ -1,6 +1,7 @@
 from collections import namedtuple
-
 import pandas
+from abc import ABC, abstractmethod
+
 
 df = pandas.read_csv("hotels.csv", dtype={"id": str})
 
@@ -30,6 +31,11 @@ class Hotel:
     def get_hotel_count(cls, data):
         return len(data)
 
+class Ticket(ABC):
+    @abstractmethod
+    def generate(self):
+        pass
+
 class Reservation:
     def __init__(self, customer_name, hotel_object):
         self.customer_name = customer_name
@@ -40,13 +46,29 @@ class Reservation:
         content = (f"""
             Thank you for your reservation!
             Here are the booking data:
-            Name: {self.customer_name}
+            Name: {self.the_customer_name}
             Hotel name: {self.hotel.name}
         """)
         return content
 
-hotel1 = Hotel(hotel_id=188)
-hotel2 = Hotel(hotel_id=134)
+    @property
+    def the_customer_name(self):
+        name = self.customer_name.strip()
+        name = name.title()
+        return name
+
+    @staticmethod
+    def convert(amount):
+        return amount * 1.2
+
+class DigitalTicket(Ticket):
+    def generate(self):
+        return "Hello, this is your digital ticket"
+    def download(self):
+        pass
+
+hotel1 = Hotel(hotel_id="188")
+hotel2 = Hotel(hotel_id="134")
 
 print(hotel1.available())
 
@@ -55,3 +77,10 @@ print(hotel1.name)
 print(hotel2.name)
 
 print(Hotel.get_hotel_count(data=df))
+
+ticket = Reservation(customer_name="john smith ", hotel_object=hotel1)
+print(ticket.the_customer_name)
+print(ticket.generate())
+
+converted = Reservation.convert(10)
+print(converted)
